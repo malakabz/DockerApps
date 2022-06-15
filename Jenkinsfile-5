@@ -1,0 +1,74 @@
+pipeline {
+  agent any
+  environment {
+    DOCKERHUB_CREDENTIALS=credentials('shakya-dockerhub')
+    IMAGE_NAME='shakyadev/jenkins-example-ghcr'
+    IMAGE_VERSION='8.5-204'
+    COSIGN_PASSWORD=credentials('cosign-password')
+    COSIGN_PRIVATE_KEY=credentials('cosign-private-key')
+    COSIGN_PUBLIC_KEY=credentials('cosign-public-key')
+  }
+  stages {
+    stage('cleanup') {
+      steps {
+        sh 'docker system prune -a --volumes --force'
+      }
+    }
+    stage('build image') {
+      steps {
+        sh 'docker build -t $IMAGE_NAME:$IMAGE_VERSION .'
+      }
+    }
+    stage('Scan') {
+      steps {
+        // Scan the image
+        prismaCloudScanImage ca: '',
+        cert: '',
+        dockerAddress: 'unix:///var/run/docker.sock',
+        image: 'shakyadev/jenkins-example-ghcr:8.5-204',
+        key: '',
+        logLevel: 'info',
+        podmanPath: '',
+        project: '',
+        resultsFile: 'prisma-cloud-scan-results.json',
+        ignoreImageBuildTime:true
+      }
+    }
+    
+    stage('login') {
+      steps {
+        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+      }
+    }
+    stage('tag image') {
+      steps {
+        sh 'docker tag $IMAGE_NAME:$IMAGE_VERSION $IMAGE_NAME:$IMAGE_VERSION'
+      }
+    }
+    stage('push image') {
+      steps {
+        sh 'docker push $IMAGE_NAME:$IMAGE_VERSION'
+      }
+    }
+    stage('sign the container image') {
+      steps {
+        sh 'cosign version'
+        sh 'cosign sign --key $COSIGN_PRIVATE_KEY $IMAGE_NAME:$IMAGE_VERSION'
+      }
+    }
+    stage('verify the container image') {
+      steps {
+        sh 'cosign version'
+        sh 'cosign verify --key $COSIGN_PUBLIC_KEY $IMAGE_NAME:$IMAGE_VERSION'
+      }
+    }
+  }
+
+  post {
+    always {
+      sh 'docker logout'
+      // The post section lets you run the publish step regardless of the scan results
+      prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
+    }
+  }
+}
