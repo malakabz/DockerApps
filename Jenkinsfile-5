@@ -4,9 +4,9 @@ pipeline {
     DOCKERHUB_CREDENTIALS=credentials('shakya-dockerhub')
     IMAGE_NAME='shakyadev/jenkins-example-ghcr'
     IMAGE_VERSION='8.5-204'
-    COSIGN_PASSWORD=credentials('cosign-password')
-    COSIGN_PRIVATE_KEY=credentials('cosign-private-key')
-    COSIGN_PUBLIC_KEY=credentials('cosign-public-key')
+//   COSIGN_PASSWORD=credentials('cosign-password')
+//   COSIGN_PRIVATE_KEY=credentials('cosign-private-key')
+//   COSIGN_PUBLIC_KEY=credentials('cosign-public-key')
   }
   stages {
     stage('cleanup') {
