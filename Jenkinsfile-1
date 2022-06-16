@@ -8,6 +8,7 @@ pipeline {
 //    }
     stage('build image') {
       steps {
+        sh 'whoami'
         sh 'docker build -t darinpope/jenkins-example-ghcr:8.5-204 .'
       }
     }
