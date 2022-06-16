@@ -5,7 +5,7 @@ pipeline {
     stage('build image') {
       steps {
         sh 'whoami'
-        sh 'docker build -t darinpope/jenkins-example-ghcr:8.5-204 .'
+        sh 'docker build -t malakabz/jenkins-example-ghcr:8.5-204 .'
       }
     }
   
@@ -15,7 +15,7 @@ pipeline {
                 prismaCloudScanImage ca: '',
                 cert: '',
                 dockerAddress: 'unix:///var/run/docker.sock',
-                image: 'test/test-image:0.1',
+                image: 'malakabz/jenkins-example-ghcr:8.5-204',
                 key: '',
                 logLevel: 'info',
                 podmanPath: '',
