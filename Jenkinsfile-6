@@ -1,18 +1,14 @@
 pipeline {
   agent any
   stages {
- //   stage('cleanup') {
- //     steps {
-    //    sh 'docker system prune -a --volumes --force'
-//      }
-//    }
+
     stage('build image') {
       steps {
         sh 'whoami'
         sh 'docker build -t darinpope/jenkins-example-ghcr:8.5-204 .'
       }
     }
-  }
+  
   stage('Scan') {
             steps {
                 // Scan the image
