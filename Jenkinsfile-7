@@ -47,7 +47,7 @@ pipeline {
 //    }
     stage('push image') {
       steps {
-        sh 'docker push $IMAGE_NAME:$IMAGE_VERSION'
+        sh 'docker push malakab/prisma:$IMAGE_NAME:$IMAGE_VERSION'
       }
     }
  
