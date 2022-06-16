@@ -1,0 +1,41 @@
+pipeline {
+  agent any
+  stages {
+ //   stage('cleanup') {
+ //     steps {
+    //    sh 'docker system prune -a --volumes --force'
+//      }
+//    }
+    stage('build image') {
+      steps {
+        sh 'whoami'
+        sh 'docker build -t darinpope/jenkins-example-ghcr:8.5-204 .'
+      }
+    }
+  }
+  stage('Scan') {
+            steps {
+                // Scan the image
+                prismaCloudScanImage ca: '',
+                cert: '',
+                dockerAddress: 'unix:///var/run/docker.sock',
+                image: 'test/test-image:0.1',
+                key: '',
+                logLevel: 'info',
+                podmanPath: '',
+                project: '',
+                resultsFile: 'prisma-cloud-scan-results.json',
+                ignoreImageBuildTime:true
+            }
+        }
+    }
+    post {
+        always {
+            // The post section lets you run the publish step regardless of the scan results
+            prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
+        }
+    }
+  
+  
+  
+}
