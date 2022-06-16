@@ -4,7 +4,7 @@ pipeline {
   
   environment {
     DOCKERHUB_CREDENTIALS=credentials('dockerhub')
-    IMAGE_NAME='malakabz/jenkins-example-ghcr'
+    IMAGE_NAME='malakab/prisma'
     IMAGE_VERSION='8.5-204'
    // COSIGN_PASSWORD=credentials('cosign-password')
    // COSIGN_PRIVATE_KEY=credentials('cosign-private-key')
@@ -15,7 +15,7 @@ pipeline {
     stage('build image') {
       steps {
         sh 'whoami'
-        sh 'docker build -t malakabz/jenkins-example-ghcr:8.5-204 .'
+        sh 'docker build -t malakab/prisma:8.5-204 .'
       }
     }
   
@@ -25,7 +25,7 @@ pipeline {
                 prismaCloudScanImage ca: '',
                 cert: '',
                 dockerAddress: 'unix:///var/run/docker.sock',
-                image: 'malakabz/jenkins-example-ghcr:8.5-204',
+                image: 'malakab/prisma:8.5-204',
                 key: '',
                 logLevel: 'info',
                 podmanPath: '',
@@ -47,7 +47,7 @@ pipeline {
     }
     stage('push image') {
       steps {
-        sh 'docker push malakab/prisma:$IMAGE_NAME:$IMAGE_VERSION'
+        sh 'docker push $IMAGE_NAME:$IMAGE_VERSION'
       }
     }
  
