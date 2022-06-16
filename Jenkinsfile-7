@@ -40,11 +40,11 @@ pipeline {
         sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
       }
     }
-//    stage('tag image') {
-//      steps {
-//        sh 'docker tag $IMAGE_NAME:$IMAGE_VERSION $IMAGE_NAME:$IMAGE_VERSION'
-//      }
-//    }
+   stage('tag image') {
+      steps {
+       sh 'docker tag $IMAGE_NAME:$IMAGE_VERSION $IMAGE_NAME:$IMAGE_VERSION'
+     }
+    }
     stage('push image') {
       steps {
         sh 'docker push malakab/prisma:$IMAGE_NAME:$IMAGE_VERSION'
